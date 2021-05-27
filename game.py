@@ -24,9 +24,6 @@ pygame.display.set_caption("Conway's Game of Life")
 # Loop until the user clicks the close button.
 done = False
 
-# Used to manage how fast the screen updates
-clock = pygame.time.Clock()
-
 # -------- Main Program Loop -----------
 
 # gridWidth = X_SIZE / OFFSET
@@ -43,6 +40,7 @@ grid = [[0 for x in range(gridWidth)] for y in range(gridHeight)]
 #	k = randrange(0, gridHeight)
 #	grid[j][k] = 1
 
+#----- 3-period PULSAR
 grid[4][2] = 1
 grid[5][2] = 1
 grid[6][2] = 1
@@ -111,49 +109,41 @@ def get_live_neighbors(grid, x, y):
 	try:
 		if grid[x+1][y+1] == 1:
 			neighbors += 1
-			# print("Grid at " + str(x) + ", " + str(y) + " neighbor found: " + str(x+1) + ", " + str(y+1))
 	except:
 		pass
 	try:
 		if grid[x-1][y-1] == 1:
 			neighbors += 1
-			# print("Grid at " + str(x) + ", " + str(y) + " neighbor found: " + str(x-1) + ", " + str(y-1))
 	except:
 		pass
 	try:
 		if grid[x-1][y+1] == 1:
 			neighbors += 1
-			# print("Grid at " + str(x) + ", " + str(y) + " neighbor found: " + str(x-1) + ", " + str(y+1))
 	except:
 		pass
 	try:
 		if grid[x+1][y-1] == 1:
 			neighbors += 1
-			# print("Grid at " + str(x) + ", " + str(y) + " neighbor found: " + str(x+1) + ", " + str(y-1))
 	except:
 		pass
 	try:
 		if grid[x+1][y] == 1:
 			neighbors += 1
-			# print("Grid at " + str(x) + ", " + str(y) + " neighbor found: " + str(x+1) + ", " + str(y))
 	except:
 		pass
 	try:
 		if grid[x][y+1] == 1:
 			neighbors += 1
-			# print("Grid at " + str(x) + ", " + str(y) + " neighbor found: " + str(x) + ", " + str(y+1))
 	except:
 		pass
 	try:
 		if grid[x-1][y] == 1:
 			neighbors +=1
-			# print("Grid at " + str(x) + ", " + str(y) + " neighbor found: " + str(x-1) + ", " + str(y))
 	except:
 		pass
 	try:
 		if grid[x][y-1] == 1:
 			neighbors += 1
-			# print("Grid at " + str(x) + ", " + str(y) + " neighbor found: " + str(x) + ", " + str(y-1))
 	except:
 		pass
 
@@ -167,11 +157,8 @@ while not done:
 		if event.type == pygame.QUIT:
 			done = True
 
-    # --- Game logic should go here
-
-    # --- Screen-clearing code goes here
+    # --- Screen clearing
 	screen.fill(WHITE)
-
 
     # Draw the grid
 	drawOffset = OFFSET
@@ -191,6 +178,7 @@ while not done:
 	# --- Go ahead and update the screen with what we've drawn.
 	pygame.display.flip()
 
+	# --- Detect spacebar presses
 	for event in pygame.event.get():
 		if event.type == pygame.QUIT:
 			pygame.quit()
@@ -198,6 +186,7 @@ while not done:
 			if event.key == pygame.K_SPACE:
 				space = True
 
+	# --- If spacebar has been pressed, advance to the next generation
 	if space:
 		for i in range(gridWidth):
 			for j in range(gridHeight):
@@ -215,6 +204,7 @@ while not done:
 						app = (i,j)
 						liveSpaces.append(app)
 
+	# --- Update the grid for the next generation
 	for x,y in killSpaces:
 		grid[x][y] = 0
 	for x,y in liveSpaces:
@@ -222,9 +212,6 @@ while not done:
 
 	killSpaces.clear()
 	liveSpaces.clear()
-
-    # --- Limit to 60 frames per second
-	# clock.tick(60)
  
 # Close the window and quit.
 pygame.quit()
