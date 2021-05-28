@@ -23,12 +23,12 @@ pygame.display.set_caption("Conway's Game of Life")
 
 # Loop until the user clicks the close button.
 done = False
+time_elapsed = 0
+clock = pygame.time.Clock()
 
 # -------- Main Program Loop -----------
-
-# gridWidth = X_SIZE / OFFSET
-# gridHeight = Y_SIZE / OFFSET
-gridWidth, gridHeight = 50, 50;
+# Initialize the grid
+gridWidth, gridHeight = int((X_SIZE / OFFSET)), int((Y_SIZE / OFFSET));
 grid = [[0 for x in range(gridWidth)] for y in range(gridHeight)]
 
 
@@ -104,6 +104,8 @@ killSpaces = list()
 
 # print(grid)
 
+
+#--- Outputs the number of alive neighbors for a given cell
 def get_live_neighbors(grid, x, y):
 	neighbors = 0
 	try:
@@ -149,7 +151,11 @@ def get_live_neighbors(grid, x, y):
 
 	return neighbors
 
+
 while not done:
+
+	dt = clock.tick()
+	time_elapsed += dt
 
 	space = False
     # --- Main event loop
@@ -162,7 +168,6 @@ while not done:
 
     # Draw the grid
 	drawOffset = OFFSET
-
 	while drawOffset < X_SIZE:
 		pygame.draw.line(screen, GREY,[drawOffset, 0], [drawOffset, Y_SIZE])
 		pygame.draw.line(screen, GREY,[0, drawOffset], [X_SIZE, drawOffset])
@@ -186,12 +191,13 @@ while not done:
 			if event.key == pygame.K_SPACE:
 				space = True
 
-	# --- If spacebar has been pressed, advance to the next generation
-	if space:
+	#--- Advance to the next generation after .75 seconds
+	if time_elapsed > 750:
 		for i in range(gridWidth):
 			for j in range(gridHeight):
 				neighbors = get_live_neighbors(grid, i, j)
-				# print("Grid at " + str(i) + ", " + str(j) + " has " + str(neighbors) + " neighbors.")
+				
+				# Implement Life's transition rules
 				if grid[i][j] == 1:
 					if neighbors < 2:
 						app = (i,j)
@@ -204,14 +210,56 @@ while not done:
 						app = (i,j)
 						liveSpaces.append(app)
 
-	# --- Update the grid for the next generation
-	for x,y in killSpaces:
-		grid[x][y] = 0
-	for x,y in liveSpaces:
-		grid[x][y] = 1
+		# --- Update the grid for the next generation
+		for x,y in killSpaces:
+			grid[x][y] = 0
+		for x,y in liveSpaces:
+			grid[x][y] = 1
 
-	killSpaces.clear()
-	liveSpaces.clear()
+		killSpaces.clear()
+		liveSpaces.clear()
+		time_elapsed = 0
+
+	# --- Pauses the loop on spacebar press, continues on the second press
+	if space:
+		space = False
+		while True:
+			for event in pygame.event.get():
+				if event.type == pygame.QUIT:
+					pygame.quit()
+				if event.type == pygame.KEYDOWN:
+					if event.key == pygame.K_SPACE:
+						space = True
+			if space:
+				break
+
+	# --- If spacebar has been pressed, advance to the next generation
+	# if space:
+	#	for i in range(gridWidth):
+	#		for j in range(gridHeight):
+	#			neighbors = get_live_neighbors(grid, i, j)
+	#			
+				# Implement Life's transition rules
+	#			if grid[i][j] == 1:
+	#				if neighbors < 2:
+	#					app = (i,j)
+	#					killSpaces.append(app)
+	#				if neighbors > 3:
+	#					app = (i,j)
+	#					killSpaces.append(app)
+	#			else:
+	#				if neighbors == 3:
+	#					app = (i,j)
+	#					liveSpaces.append(app)
+
+	# --- Update the grid for the next generation
+	#	for x,y in killSpaces:
+	#		grid[x][y] = 0
+	#	for x,y in liveSpaces:
+	#		grid[x][y] = 1
+
+	#	killSpaces.clear()
+	#	liveSpaces.clear()
  
 # Close the window and quit.
 pygame.quit()
