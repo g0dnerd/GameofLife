@@ -1,3 +1,8 @@
+# VERSION 0.1
+# Author: Paul Kukowski (https://github.com/g0dnerd)
+# License: see LICENSE file
+
+
 import pygame
 from pygame.locals import *
 from random import randrange
